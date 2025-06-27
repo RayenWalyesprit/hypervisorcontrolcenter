@@ -1,0 +1,26 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker build -t my-flask-app .
+  only:
+    - main
+
+test:
+  stage: test
+  script:
+    - docker run --rm my-flask-app python -m unittest discover tests/
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - docker tag my-flask-app:latest registry.gitlab.com/yourusername/yourproject/my-flask-app:latest
+    - docker push registry.gitlab.com/yourusername/yourproject/my-flask-app:latest
+  only:
+    - main
